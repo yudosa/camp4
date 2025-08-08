@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>대강당을 탈출하자!!</title>
+    
+    <!-- 모바일 최적화 메타 태그 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="방탈출게임">
+    <meta name="theme-color" content="#764ba2">
+    <meta name="msapplication-TileColor" content="#764ba2">
+    <meta name="msapplication-TileImage" content="/icon-192.png">
+    
+    <!-- PWA 메타 태그 -->
+    <meta name="description" content="대강당에서 탈출하는 방탈출 게임">
+    <meta name="theme-color" content="#764ba2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="방탈출게임">
+    
+    <!-- PWA 아이콘 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- 터치 최적화 -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <!-- 게임 컨테이너 -->
+    <div id="game-container">
+        <!-- 배경 -->
+        <div id="background" class="background"></div>
+        
+        <!-- 게임 타이틀 -->
+        <div id="game-title" class="game-title">
+            <h1>대강당을 탈출하자!!</h1>
+            <p>여러분들은 대강당에 갇혔습니다.</p>
+            <p>다음 미션지를 가기 위해서는 비밀번호를 풀어야 합니다.</p>
+            <p>팀원들과 협업하여 미션을 풀어보세요!!</p>
+        </div>
+
+        <!-- 보물상자 -->
+        <div id="treasure-box" class="treasure-box">
+            <div class="box-lid">
+            </div>
+            <div class="box-body">
+            </div>
+        </div>
+
+        <!-- 키패드 (금고 앞에 위치) -->
+        <div class="lock-area">
+            <!-- 단순한 비밀번호 입력 -->
+            <div class="simple-lock">
+                <div class="lock-display">
+                    <div class="lock-screen">
+                        <span id="lock-code">000000</span>
+                    </div>
+                </div>
+                <div class="lock-buttons">
+                    <div class="button-row">
+                        <button class="lock-btn" data-digit="1">1</button>
+                        <button class="lock-btn" data-digit="2">2</button>
+                        <button class="lock-btn" data-digit="3">3</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="lock-btn" data-digit="4">4</button>
+                        <button class="lock-btn" data-digit="5">5</button>
+                        <button class="lock-btn" data-digit="6">6</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="lock-btn" data-digit="7">7</button>
+                        <button class="lock-btn" data-digit="8">8</button>
+                        <button class="lock-btn" data-digit="9">9</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="lock-btn clear-btn">지움</button>
+                        <button class="lock-btn" data-digit="0">0</button>
+                        <button class="lock-btn enter-btn">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 로고 -->
+        <div class="logo-container">
+            <img src="logo2.png" alt="로고" class="logo-image">
+        </div>
+
+        <!-- 문제보기 버튼 -->
+        <button id="problem-btn" class="problem-btn">
+            <span>문제보기</span>
+        </button>
+
+        <!-- 문제 모달 -->
+        <div id="problem-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>대강당을 탈출하자!!</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="problem-image">
+                        <img src="q4.jpg" alt="문제 이미지">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 성공 모달 -->
+        <div id="success-modal" class="modal">
+            <div class="modal-content success-content">
+                <div class="modal-header">
+                    <h2>🎉 성공!</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="success-message">
+                        <h3>다음 미션지로 이동하세요.</h3>
+                        <p class="mission-next">다음 미션지 : 대강당</p>
+                        <div class="success-actions">
+                            <button class="success-btn">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 폭죽 효과 -->
+            <div class="confetti-container">
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+            </div>
+            
+            <!-- 꽃가루 효과 -->
+            <div class="sparkle-container">
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+            </div>
+        </div>
+
+        <!-- 실패 모달 -->
+        <div id="failure-modal" class="modal">
+            <div class="modal-content failure-content">
+                <div class="modal-header">
+                    <h2>❌ 실패</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="failure-message">
+                        <h3>비밀번호가 틀렸습니다!</h3>
+                        <p>다시 한 번 확인해보세요.</p>
+                        <div class="failure-actions">
+                            <button class="retry-btn">다시 시도</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 폭발 효과 -->
+        <div id="explosion" class="explosion">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- 축하 노래 오디오 -->
+        <audio id="celebration-audio" preload="auto">
+            <source src="celebration.mp3" type="audio/mpeg">
+            <source src="celebration.ogg" type="audio/ogg">
+        </audio>
+
+        <!-- 게임 상태 표시 -->
+        <div id="game-status" class="game-status">
+            <div class="status-item">
+                <span class="status-label">시간:</span>
+                <span id="timer" class="status-value">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

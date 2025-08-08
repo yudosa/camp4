@@ -1,0 +1,17 @@
+{
+  "name": "escape-room-backend",
+  "type": "nodejs",
+  "build": {
+    "command": "npm install",
+    "output": ""
+  },
+  "deploy": {
+    "nodejs": {
+      "start": "node server.js"
+    }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "3000"
+  }
+}
